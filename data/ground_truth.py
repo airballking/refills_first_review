@@ -1,6 +1,11 @@
 #!/usr/bin/env python
 # TODO(Georg): add license
 import rospy
+import anytree as at
+import PyKDL as kdl
+import tf2_ros
+import geometry_msgs.msg
+
 
 class Vector3d:
     def __init__(self, x = 0 ,y = 0 ,z = 0):
@@ -742,13 +747,106 @@ def instantiate_ground_truth():
     pass
 
 
-def visualize(data):
-    # TODO(Georg): please complete me
+def to_msg(kdl_vec):
+    msg = geometry_msgs.msg.Point()
+    msg.x = kdl_vec.x()
+    msg.y = kdl_vec.y()
+    msg.z = kdl_vec.z()
+    return msg
+
+
+def publish_tf(data):
+    broadcaster = tf2_ros.StaticTransformBroadcaster()
+    transforms = []
+    now = rospy.Time.now()
+    for node in at.PreOrderIter(data):
+        if node.parent:
+            msg = geometry_msgs.msg.TransformStamped()
+            msg.header.stamp = now
+            msg.header.frame_id = node.parent.name
+            msg.child_frame_id = node.name
+            msg.transform.rotation.w = 1.0
+            msg.transform.translation = to_msg(node.pos)
+            transforms.append(msg)
+    broadcaster.sendTransform(transforms)
+
+
+def publish_marker_array(data):
+    # TODO(Georg): implement me
     pass
+
+
+def visualize(data):
+    for node in at.PreOrderIter(data):
+        print node
+    publish_tf(data)
+    publish_marker_array(data)
+
+
+def separator_vec(x):
+    return kdl.Vector(x, 0.01, 0.005)
+
+
+def barcode_vec(x):
+    return kdl.Vector(x, -0.028, -0.035)
+
+
+def populate_ground_truth():
+    shelf_system_key = 'shelf_system'
+    layer_key = 'shelf_layer'
+    separator_key = 'separator'
+    barcode_key = 'barcode'
+
+    root = at.Node("map")
+
+    # BEGIN OF SHELF1
+    shelf1 = at.Node("shelf1", parent=root, pos=kdl.Vector(0.653156, -0.627501, 0.0), type=shelf_system_key)
+
+    s1_layer1 = at.Node("s1_layer1", parent=shelf1, pos=kdl.Vector(0.0, -0.028, 0.154), type=layer_key)
+
+    at.Node("s1_l1_sep1", parent=s1_layer1, pos=separator_vec(0.005), type=separator_key)
+    at.Node("s1_l1_sep2", parent=s1_layer1, pos=separator_vec(0.100), type=separator_key)
+    at.Node("s1_l1_sep3", parent=s1_layer1, pos=separator_vec(0.240), type=separator_key)
+    at.Node("s1_l1_sep4", parent=s1_layer1, pos=separator_vec(0.382), type=separator_key)
+    at.Node("s1_l1_sep5", parent=s1_layer1, pos=separator_vec(0.511), type=separator_key)
+    at.Node("s1_l1_sep6", parent=s1_layer1, pos=separator_vec(0.640), type=separator_key)
+    at.Node("s1_l1_sep7", parent=s1_layer1, pos=separator_vec(0.766), type=separator_key)
+    at.Node("s1_l1_sep8", parent=s1_layer1, pos=separator_vec(0.867), type=separator_key)
+    at.Node("s1_l1_sep9", parent=s1_layer1, pos=separator_vec(0.980), type=separator_key)
+
+    at.Node("027995", parent=s1_layer1, pos=barcode_vec(0.030), type=barcode_key)
+    at.Node("544205", parent=s1_layer1, pos=barcode_vec(0.162), type=barcode_key)
+    at.Node("384160", parent=s1_layer1, pos=barcode_vec(0.297), type=barcode_key)
+    at.Node("457319", parent=s1_layer1, pos=barcode_vec(0.428), type=barcode_key)
+    at.Node("534812", parent=s1_layer1, pos=barcode_vec(0.572), type=barcode_key)
+    at.Node("402610", parent=s1_layer1, pos=barcode_vec(0.697), type=barcode_key)
+    at.Node("433961", parent=s1_layer1, pos=barcode_vec(0.806), type=barcode_key)
+    at.Node("507923", parent=s1_layer1, pos=barcode_vec(0.917), type=barcode_key)
+
+    # TODO: complete me
+
+    # BEGIN OF SHELF2
+    shelf2 = at.Node("shelf2", parent=root, pos=kdl.Vector(1.6521,   -0.624451, 0.0), type=shelf_system_key)
+    s2_layer1 = at.Node("s2_layer1", parent=shelf2, pos=kdl.Vector(0.0, -0.028, 0.154), type=layer_key)
+    # TODO: complete me
+
+    # BEGIN OF SHELF3
+    shelf3 = at.Node("shelf3", parent=root, pos=kdl.Vector(2.65449,   -0.632107, 0.0), type=shelf_system_key)
+    s3_layer1 = at.Node("s3_layer1", parent=shelf3, pos=kdl.Vector(0.0, -0.028, 0.154), type=layer_key)
+    # TODO: complete me
+
+    # BEGIN OF SHELF4
+    shelf4 = at.Node("shelf4", parent=root, pos=kdl.Vector(3.65369,   -0.630106, 0.0), type=shelf_system_key)
+    s4_layer1 = at.Node("s4_layer1", parent=shelf4, pos=kdl.Vector(0.0, -0.028, 0.154), type=layer_key)
+    # TODO: complete me
+
+    return root
 
 
 if __name__ == '__main__':
     try:
-        visualize(instantiate_ground_truth())
+        rospy.init_node('ground_truth_broadcaster')
+        visualize(populate_ground_truth())
+        rospy.spin()
     except rospy.ROSInterruptException:
         pass

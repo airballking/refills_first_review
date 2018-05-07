@@ -5,7 +5,14 @@ import anytree as at
 import PyKDL as kdl
 import tf2_ros
 import geometry_msgs.msg
+from geometry_msgs.msg import Vector3
+from std_msgs.msg import ColorRGBA
+from visualization_msgs.msg import MarkerArray, Marker
 
+shelf_system_key = 'shelf_system'
+layer_key = 'shelf_layer'
+separator_key = 'separator'
+barcode_key = 'barcode'
 
 class Vector3d:
     def __init__(self, x = 0 ,y = 0 ,z = 0):
@@ -772,8 +779,49 @@ def publish_tf(data):
 
 
 def publish_marker_array(data):
-    # TODO(Georg): implement me
-    pass
+    marker_pub = rospy.Publisher('visualization_marker_array', MarkerArray, queue_size=10)
+    rospy.sleep(rospy.Duration(0.5))
+    ma = MarkerArray()
+    for id, node in enumerate(at.PreOrderIter(data)):
+        # prepare the communalities
+        m = Marker()
+        m.header.frame_id = node.name
+        m.id = id
+        m.pose.orientation.w = 1.0
+        m.action = Marker.ADD
+        m.type = Marker.MESH_RESOURCE
+        m.scale = Vector3(1.0, 1.0, 1.0)
+        m.color = ColorRGBA(0.0, 0.0, 0.0, 0.0)
+        m.mesh_use_embedded_materials = True
+        # take care of the object-specific differences in a nested if-structure
+        if node.parent: # ignore the root node
+            if node.type is shelf_system_key:
+                m.ns = 'shelf_body_ns'
+                m.mesh_resource = 'package://refills_first_review/meshes/shelves/DMShelfFrameFrontStore.dae'
+                m.pose.position.x = 0.5
+                m.pose.position.y = 0.313126
+                m.pose.position.z = 0.8705
+            if node.type is layer_key:
+                if 'layer1' not in node.name: # ignore to bottom shelf layers
+                    m.ns = 'shelf_layer_ns'
+                    m.mesh_resource = 'package://refills_first_review/meshes/shelves/DMShelfLayer4TilesFront.dae'
+                    m.pose.position.x = 0.5
+                    m.pose.position.y = 0.27
+                    m.pose.position.z = -0.067975
+            if node.type is separator_key:
+                m.ns = 'separator_ns'
+                m.mesh_resource = 'package://refills_first_review/meshes/shelves/DMShelfSeparator4Tiles.dae'
+                m.pose.position.x = 0.0
+                m.pose.position.y = 0.217
+                m.pose.position.z = 0.015
+            if node.type is barcode_key:
+                m.type = Marker.CUBE
+                m.ns = 'barcode_ns'
+                m.scale = Vector3(0.04, 0.001, 0.038)
+                m.color = ColorRGBA(1.0, 1.0, 1.0, 1.0)
+                m.mesh_use_embedded_materials = False
+        ma.markers.append(m)
+    marker_pub.publish(ma)
 
 
 def visualize(data):
@@ -792,17 +840,14 @@ def barcode_vec(x):
 
 
 def populate_ground_truth():
-    shelf_system_key = 'shelf_system'
-    layer_key = 'shelf_layer'
-    separator_key = 'separator'
-    barcode_key = 'barcode'
+
 
     root = at.Node("map")
 
     # BEGIN OF SHELF1
-    shelf1 = at.Node("shelf1", parent=root, pos=kdl.Vector(0.653156, -0.627501, 0.0), type=shelf_system_key)
+    shelf1 = at.Node("shelf1", parent=root, pos=kdl.Vector(0.653156, -0.627501, 0.047), type=shelf_system_key)
 
-    s1_layer1 = at.Node("s1_layer1", parent=shelf1, pos=kdl.Vector(0.0, -0.028, 0.154), type=layer_key)
+    s1_layer1 = at.Node("s1_layer1", parent=shelf1, pos=kdl.Vector(0.0, -0.028, 0.112), type=layer_key)
 
     at.Node("s1_l1_sep1", parent=s1_layer1, pos=separator_vec(0.005), type=separator_key)
     at.Node("s1_l1_sep2", parent=s1_layer1, pos=separator_vec(0.100), type=separator_key)
@@ -823,20 +868,24 @@ def populate_ground_truth():
     at.Node("433961", parent=s1_layer1, pos=barcode_vec(0.806), type=barcode_key)
     at.Node("507923", parent=s1_layer1, pos=barcode_vec(0.917), type=barcode_key)
 
+    s1_layer2 = at.Node("s1_layer2", parent=s1_layer1, pos=kdl.Vector(0.0, 0.102, 0.4), type=layer_key)
+
+    at.Node("s1_l2_sep1", parent=s1_layer2, pos=separator_vec(0.005), type=separator_key)
+
     # TODO: complete me
 
     # BEGIN OF SHELF2
-    shelf2 = at.Node("shelf2", parent=root, pos=kdl.Vector(1.6521,   -0.624451, 0.0), type=shelf_system_key)
+    shelf2 = at.Node("shelf2", parent=root, pos=kdl.Vector(1.6521,   -0.624451, 0.05), type=shelf_system_key)
     s2_layer1 = at.Node("s2_layer1", parent=shelf2, pos=kdl.Vector(0.0, -0.028, 0.154), type=layer_key)
     # TODO: complete me
 
     # BEGIN OF SHELF3
-    shelf3 = at.Node("shelf3", parent=root, pos=kdl.Vector(2.65449,   -0.632107, 0.0), type=shelf_system_key)
+    shelf3 = at.Node("shelf3", parent=root, pos=kdl.Vector(2.65449,   -0.632107, 0.05), type=shelf_system_key)
     s3_layer1 = at.Node("s3_layer1", parent=shelf3, pos=kdl.Vector(0.0, -0.028, 0.154), type=layer_key)
     # TODO: complete me
 
     # BEGIN OF SHELF4
-    shelf4 = at.Node("shelf4", parent=root, pos=kdl.Vector(3.65369,   -0.630106, 0.0), type=shelf_system_key)
+    shelf4 = at.Node("shelf4", parent=root, pos=kdl.Vector(3.65369,   -0.630106, 0.05), type=shelf_system_key)
     s4_layer1 = at.Node("s4_layer1", parent=shelf4, pos=kdl.Vector(0.0, -0.028, 0.154), type=layer_key)
     # TODO: complete me
 

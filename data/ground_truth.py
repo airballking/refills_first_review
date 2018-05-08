@@ -818,6 +818,7 @@ def publish_marker_array(data):
             if node.type is barcode_key:
                 m.type = Marker.CUBE
                 m.ns = 'barcode_ns'
+                # TODO(Georg): add offset
                 m.scale = Vector3(0.04, 0.001, 0.038)
                 m.color = ColorRGBA(1.0, 1.0, 1.0, 1.0)
                 m.mesh_use_embedded_materials = False
@@ -874,13 +875,22 @@ def populate_ground_truth():
     # SHELF1
     shelf1 = system_node("shelf1", root, 0.653156, -0.627501, 0.047)
 
-    # SHELF1, LAYER 1
     s1_layer1 = complete_layer("s1_layer1", shelf1, 0.0, -0.028, 0.112,
                                [0.005, 0.100, 0.240, 0.382, 0.511, 0.640, 0.766, 0.867, 0.98],
                                {"027995": 0.030, "544205": 0.162, "384160": 0.297,
                                 "457319": 0.428, "534812": 0.572, "402610": 0.697,
                                 "433961": 0.806, "507923": 0.917})
 
+    s1_layer2 = complete_layer("s1_layer2", s1_layer1, 0.0, 0.102, 0.4,
+                               [0.005, 0.155, 0.218, 0.280, 0.361, 0.561, 0.609, 0.749, 0.858, 0.980],
+                               {"500183": 0.065, "046088": 0.197, "262289": 0.302,
+                                "010055": 0.414, "015652": 0.538, "516937": 0.664,
+                                "125481": 0.906})
+
+    s1_layer3 = complete_layer("s1_layer3", s1_layer2, 0, 0, 0.34,
+                               [0.005, 0.150, 0.364, 0.513, 0.771, 0.857, 0.999],
+                               {"004728": 0.056, "196068": 0.240, "332384": 0.426,
+                                "523129": 0.584, "424929": 0.772, "235542":0.902})
     # TODO: complete me
 
     # SHELF2

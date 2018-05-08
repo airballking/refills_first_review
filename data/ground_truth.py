@@ -814,6 +814,7 @@ def publish_marker_array(data):
                 m.pose.position.x = 0.0
                 m.pose.position.y = 0.217
                 m.pose.position.z = 0.015
+                m.color = ColorRGBA(0.8, 0.8, 0.8, 0.5)
             if node.type is barcode_key:
                 m.type = Marker.CUBE
                 m.ns = 'barcode_ns'
@@ -839,54 +840,59 @@ def barcode_vec(x):
     return kdl.Vector(x, -0.028, -0.035)
 
 
+def system_node(name, parent, x, y, z):
+    return at.Node(name, parent=parent, pos=kdl.Vector(x, y, z), type=shelf_system_key)
+
+
+def layer_node(name, parent, x, y, z):
+    return at.Node(name, parent=parent, pos=kdl.Vector(x, y, z), type=layer_key)
+
+
+def separator_node(name, parent, x_offset):
+    return at.Node(name, parent=parent, pos=separator_vec(x_offset), type=separator_key)
+
+
+def barcode_node(name, parent, x_offset):
+    return at.Node(name, parent=parent, pos=barcode_vec(x_offset), type=barcode_key)
+
+
+def complete_layer(name, parent, x, y, z, separators, barcodes):
+    layer = layer_node(name, parent, x, y, z)
+
+    for idx, x_offset in enumerate(separators):
+        separator_node("{}_sep{}".format(name, idx), layer, x_offset)
+
+    for name, x_offset in barcodes.items():
+        barcode_node(name, layer, x_offset)
+
+    return layer
+
+
 def populate_ground_truth():
-
-
     root = at.Node("map")
 
-    # BEGIN OF SHELF1
-    shelf1 = at.Node("shelf1", parent=root, pos=kdl.Vector(0.653156, -0.627501, 0.047), type=shelf_system_key)
+    # SHELF1
+    shelf1 = system_node("shelf1", root, 0.653156, -0.627501, 0.047)
 
-    s1_layer1 = at.Node("s1_layer1", parent=shelf1, pos=kdl.Vector(0.0, -0.028, 0.112), type=layer_key)
-
-    at.Node("s1_l1_sep1", parent=s1_layer1, pos=separator_vec(0.005), type=separator_key)
-    at.Node("s1_l1_sep2", parent=s1_layer1, pos=separator_vec(0.100), type=separator_key)
-    at.Node("s1_l1_sep3", parent=s1_layer1, pos=separator_vec(0.240), type=separator_key)
-    at.Node("s1_l1_sep4", parent=s1_layer1, pos=separator_vec(0.382), type=separator_key)
-    at.Node("s1_l1_sep5", parent=s1_layer1, pos=separator_vec(0.511), type=separator_key)
-    at.Node("s1_l1_sep6", parent=s1_layer1, pos=separator_vec(0.640), type=separator_key)
-    at.Node("s1_l1_sep7", parent=s1_layer1, pos=separator_vec(0.766), type=separator_key)
-    at.Node("s1_l1_sep8", parent=s1_layer1, pos=separator_vec(0.867), type=separator_key)
-    at.Node("s1_l1_sep9", parent=s1_layer1, pos=separator_vec(0.980), type=separator_key)
-
-    at.Node("027995", parent=s1_layer1, pos=barcode_vec(0.030), type=barcode_key)
-    at.Node("544205", parent=s1_layer1, pos=barcode_vec(0.162), type=barcode_key)
-    at.Node("384160", parent=s1_layer1, pos=barcode_vec(0.297), type=barcode_key)
-    at.Node("457319", parent=s1_layer1, pos=barcode_vec(0.428), type=barcode_key)
-    at.Node("534812", parent=s1_layer1, pos=barcode_vec(0.572), type=barcode_key)
-    at.Node("402610", parent=s1_layer1, pos=barcode_vec(0.697), type=barcode_key)
-    at.Node("433961", parent=s1_layer1, pos=barcode_vec(0.806), type=barcode_key)
-    at.Node("507923", parent=s1_layer1, pos=barcode_vec(0.917), type=barcode_key)
-
-    s1_layer2 = at.Node("s1_layer2", parent=s1_layer1, pos=kdl.Vector(0.0, 0.102, 0.4), type=layer_key)
-
-    at.Node("s1_l2_sep1", parent=s1_layer2, pos=separator_vec(0.005), type=separator_key)
+    # SHELF1, LAYER 1
+    s1_layer1 = complete_layer("s1_layer1", shelf1, 0.0, -0.028, 0.112,
+                               [0.005, 0.100, 0.240, 0.382, 0.511, 0.640, 0.766, 0.867, 0.98],
+                               {"027995": 0.030, "544205": 0.162, "384160": 0.297,
+                                "457319": 0.428, "534812": 0.572, "402610": 0.697,
+                                "433961": 0.806, "507923": 0.917})
 
     # TODO: complete me
 
-    # BEGIN OF SHELF2
-    shelf2 = at.Node("shelf2", parent=root, pos=kdl.Vector(1.6521,   -0.624451, 0.05), type=shelf_system_key)
-    s2_layer1 = at.Node("s2_layer1", parent=shelf2, pos=kdl.Vector(0.0, -0.028, 0.154), type=layer_key)
+    # SHELF2
+    shelf2 = system_node("shelf2", root, 1.6521,   -0.624451, 0.05)
     # TODO: complete me
 
-    # BEGIN OF SHELF3
-    shelf3 = at.Node("shelf3", parent=root, pos=kdl.Vector(2.65449,   -0.632107, 0.05), type=shelf_system_key)
-    s3_layer1 = at.Node("s3_layer1", parent=shelf3, pos=kdl.Vector(0.0, -0.028, 0.154), type=layer_key)
+    # SHELF3
+    shelf3 = system_node("shelf3", root, 2.65449,   -0.632107, 0.05)
     # TODO: complete me
 
-    # BEGIN OF SHELF4
-    shelf4 = at.Node("shelf4", parent=root, pos=kdl.Vector(3.65369,   -0.630106, 0.05), type=shelf_system_key)
-    s4_layer1 = at.Node("s4_layer1", parent=shelf4, pos=kdl.Vector(0.0, -0.028, 0.154), type=layer_key)
+    # SHELF4
+    shelf4 = system_node("shelf4", root, 3.65369,   -0.630106, 0.05)
     # TODO: complete me
 
     return root

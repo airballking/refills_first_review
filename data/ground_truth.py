@@ -808,19 +808,22 @@ def publish_marker_array(data):
                     m.pose.position.x = 0.5
                     m.pose.position.y = 0.27
                     m.pose.position.z = -0.067975
+                    m.color = ColorRGBA(0.0, 0.8, 0.0, 1.0)
             if node.type is separator_key:
                 m.ns = 'separator_ns'
                 m.mesh_resource = 'package://refills_first_review/meshes/shelves/DMShelfSeparator4Tiles.dae'
                 m.pose.position.x = 0.0
                 m.pose.position.y = 0.217
                 m.pose.position.z = 0.015
-                m.color = ColorRGBA(0.8, 0.8, 0.8, 0.5)
+                m.color = ColorRGBA(0.0, 0.0, 0.8, 1.0)
+                # m.color = ColorRGBA(0.8, 0.8, 0.8, 0.5)
             if node.type is barcode_key:
                 m.type = Marker.CUBE
                 m.ns = 'barcode_ns'
                 # TODO(Georg): add offset
                 m.scale = Vector3(0.04, 0.001, 0.038)
-                m.color = ColorRGBA(1.0, 1.0, 1.0, 1.0)
+                m.color = ColorRGBA(0.8, 0.0, 0.0, 1.0)
+                # m.color = ColorRGBA(1.0, 1.0, 1.0, 1.0)
                 m.mesh_use_embedded_materials = False
         ma.markers.append(m)
     marker_pub.publish(ma)

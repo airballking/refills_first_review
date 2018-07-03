@@ -801,6 +801,7 @@ def publish_marker_array(data):
                 m.pose.position.x = 0.5
                 m.pose.position.y = 0.313126
                 m.pose.position.z = 0.8705
+                m.color = ColorRGBA(0.0, 0.8, 0.0, 1.0)
             if node.type is layer_key:
                 if 'layer1' not in node.name: # ignore to bottom shelf layers
                     m.ns = 'shelf_layer_ns'
@@ -878,7 +879,7 @@ def populate_ground_truth():
     # SHELF1
     shelf1 = system_node("shelf1", root, 0.653156, -0.627501, 0.047)
 
-    s1_layer1 = complete_layer("s1_layer1", shelf1, 0.0, -0.028, 0.112,
+    s1_layer1 = complete_layer("s1_layer1", shelf1, 0.0, -0.028, 0.132,
                                [0.005, 0.100, 0.240, 0.382, 0.511, 0.640, 0.766, 0.867, 0.98],
                                {"027995": 0.030, "544205": 0.162, "384160": 0.297,
                                 "457319": 0.428, "534812": 0.572, "402610": 0.697,
@@ -914,7 +915,7 @@ def populate_ground_truth():
     # SHELF2
     shelf2 = system_node("shelf2", root, 1.6521,   -0.624451, 0.05)
 
-    s2_layer1 = complete_layer("s2_layer1", shelf2 , 0, -0.028, 0.154, 
+    s2_layer1 = complete_layer("s2_layer1", shelf2 , 0, -0.028, 0.134, 
                                 [-0.005, 0.051, 0.086, 0.129, 0.181, 0.389, 0.589, 0.785, 0.991], 
                                 {"013462" : 0.030, "458823" : 0.113, "522273" : 0.268,
                                  "102696" : 0.466, "102694" : 0.676, "519151" : 0.848}) 
@@ -951,9 +952,9 @@ def populate_ground_truth():
                                  "479455" : 0.673, "467637" : 0.755, "317514" : 0.835, "317512" : 0.916})
 
     # SHELF3
-    shelf3 = system_node("shelf3", root, 2.65449,   -0.632107, 0.05)
+    shelf3 = system_node("shelf3", root, 2.650449,   -0.632107, 0.05)
 
-    s3_layer1 = complete_layer("s3_layer1", shelf3 , 0, -0.028, 0.154, 
+    s3_layer1 = complete_layer("s3_layer1", shelf3 , 0, -0.028, 0.134, 
                                 [0.005, 0.090, 0.285, 0.380, 0.470, 0.559, 0.645, 0.735, 0.821, 0.907, 0.995], 
                                 {"260725" : 0.075, "260707" : 0.270, "554301" : 0.402, "404491" : 0.502, 
                                 "521873" : 0.634, "402589" : 0.745, "260667" : 0.889})
@@ -985,9 +986,9 @@ def populate_ground_truth():
 
 
     # SHELF4
-    shelf4 = system_node("shelf4", root, 3.65369,   -0.630106, 0.05)
+    shelf4 = system_node("shelf4", root, 3.64369,  -0.630106, 0.05)
 
-    s4_layer1 = complete_layer("s4_layer1", shelf4, 0, -0.028, 0.154, 
+    s4_layer1 = complete_layer("s4_layer1", shelf4, 0, -0.028, 0.134, 
                                 [0.005, 0.065, 0.135, 0.188, 0.250, 0.314, 0.381, 0.445, 0.523, 0.601, 0.759, 0.908, 0.980], 
                                 {"250917" : 0.051, "251005" : 0.149, "253896" : 0.232, "252017" : 0.367, 
                                  "378981" : 0.468, "378940" : 0.545, "347469" : 0.664, "279513" : 0.815, 

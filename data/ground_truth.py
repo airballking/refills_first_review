@@ -821,7 +821,8 @@ def publish_marker_array(data):
             if node.type is barcode_key:
                 m.type = Marker.CUBE
                 m.ns = 'barcode_ns'
-                # TODO(Georg): add offset
+                m.pose.position.x = 0.02
+                m.pose.position.z = 0.02
                 m.scale = Vector3(0.04, 0.001, 0.038)
                 m.color = ColorRGBA(0.8, 0.0, 0.0, 1.0)
                 # m.color = ColorRGBA(1.0, 1.0, 1.0, 1.0)

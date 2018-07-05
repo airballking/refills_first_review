@@ -222,6 +222,11 @@ class KnowRob(object):
         return ros_pose
 
     def add_shelf_system(self):
+        """
+        Asserts a new shelf system in KnowRob.
+        :return: The KnowRob ID used to identify the next shelf system.
+        :rtype: str
+        """
         q = 'belief_new_object({}, R), rdf_assert(R, knowrob:describedInMap, iaishop:\'IAIShop_0\', belief_state)'.format(
             SHELF_SYSTEM)
         shelf_system_id = self.prolog_query(q)[0]['R'].replace('\'', '')
@@ -229,7 +234,17 @@ class KnowRob(object):
 
     # shelves
     def add_shelves(self, shelf_system_id, shelves):
+        """
+        Asserts new shelf meters into KnowRob as physical parts of an existing shelf system.
+        :param shelf_system_id: KnowRob-ID of the existing shelf system.
+        :type shelf_system_id: str
+        :param shelves: Shelves that shall be added, described through name and pose.
+        :type shelves: OrderedDict(str, PoseStamped)
+        :return: KnowRob-IDs of new shelf meters.
+        :rtype: list(str)
+        """
         # TODO failure handling
+        shelf_ids = []
         for name, pose in shelves.items():
             q = 'belief_new_object({}, ID), ' \
                 'rdf_assert(\'{}\', knowrob:properPhysicalParts, ID, belief_state),' \
@@ -240,10 +255,11 @@ class KnowRob(object):
             pose.pose.position.y -= solutions['T'][1]
             pose.pose.position.z -= solutions['T'][2]
             object_id = solutions['ID'].replace('\'', '')
+            shelf_ids.append(object_id)
             q = 'belief_at_update(\'{}\', {})'.format(object_id, self.pose_to_prolog(pose))
             solutions = self.prolog_query(q)
 
-        return True
+        return shelf_ids
 
     def get_objects(self, type):
         # TODO failure handling

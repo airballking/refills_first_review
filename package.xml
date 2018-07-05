@@ -50,7 +50,7 @@
   <!--   <doc_depend>doxygen</doc_depend> -->
   <buildtool_depend>catkin</buildtool_depend>
 
-  <run_depend>iai_donbot_sim</run_depend>
+  <!--run_depend>iai_donbot_sim</run_depend-->
 
   <!-- The export tag contains other, unspecified, tags -->
   <export>

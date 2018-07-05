@@ -815,9 +815,10 @@ def publish_marker_array(data):
             if node.type is shelf_meter_key:
                 m.ns = 'shelf_body_ns'
                 m.mesh_resource = 'package://refills_first_review/meshes/shelves/DMShelfFrameFrontStore.dae'
-                m.pose.position.x = 0.5
-                m.pose.position.y = 0.313126
-                m.pose.position.z = 0.8705
+                m.pose.position.x = 0.520
+#                m.pose.position.y = 0.313126
+                m.pose.position.y = 0.278
+                m.pose.position.z = 0.870
                 m.color = ColorRGBA(0.0, 0.8, 0.0, 1.0)
             if node.type is layer_key:
                 if 'layer1' not in node.name: # ignore to bottom shelf layers
@@ -869,9 +870,11 @@ def assert_into_knowrob(data):
         shelf_meter_dict[shelf_meter.name] = get_pose_stamped(shelf_meter, now)
     shelf_meter_ids = my_knowrob.add_shelves(shelf_system_id, shelf_meter_dict)
 
-    # for each meter, add shelf layers
+#    # add shelf layers
+#    for id, shelf_meter in enumerate(shelf_meters):
+#        shelf_layers = findall(shelf_meter, lambda node: node.type is layer_key)
+#        my_knowrob.add_shelf_floors(shelf_meter_ids[id])
 
-#    my_knowrob.add_shelves(shelf_system_id, shelf_meter_dict)
 
 #    for shelf_meter in shelf_meters:
 #        shelf_layers = findall(shelf_meter, lambda node: node.type is layer_key)
@@ -1086,8 +1089,8 @@ def populate_ground_truth():
 if __name__ == '__main__':
     try:
         rospy.init_node('ground_truth_broadcaster')
-        # visualize(populate_ground_truth())
-        assert_into_knowrob(populate_ground_truth())
+        visualize(populate_ground_truth())
+        #assert_into_knowrob(populate_ground_truth())
         rospy.spin()
     except rospy.ROSInterruptException:
         pass

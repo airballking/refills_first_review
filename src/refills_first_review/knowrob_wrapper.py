@@ -292,6 +292,16 @@ class KnowRob(object):
 
     # floor
     def add_shelf_floors(self, shelf_id, floors):
+        """
+        Asserts new shelf layers into Knowrob as a physical part of an existing shelf meter.
+        :param shelf_id: KnowRob-ID of an existing shelf meter.
+        :type shelf_id: str
+        :param floors: Shelf floors that shall be asserted.
+        :type floors: list(?)
+        :return: KnowRob-IDs for all new shelf floors.
+        :rtype: list(str)
+        """
+        # TODO: return IDs of asserted shelf floors
         for position in floors:
             if position[1] < 0.13:
                 if position[2] < 0.2:
